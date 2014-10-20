@@ -247,7 +247,7 @@ void jump_frame(int position) {
 void idle_frame (void) {
   jump_frame(idle_frame_start);
   
-  for(i = 0; i < NUMBER_OF_DISPLAYS; i++) {
+  for(int i = 0; i < NUMBER_OF_DISPLAYS; i++) {
     next_frame();
     delay(100);
   }
