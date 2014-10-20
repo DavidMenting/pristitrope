@@ -10,7 +10,7 @@
 
 NAME=pristitrope
 MPLAYER=/usr/bin/mplayer
-PIPE=/tmp/mplayer
+MPOPTS="-nolirc -nosound -noautosub -osdlevel 0 -vo fbdev2:/dev/fb1 -loop 0 -slave -really-quiet -input file=/tmp/mplayer"
 DAEMON=/usr/local/bin/$NAME
 
 [ -x $DAEMON ] || exit 0
@@ -22,10 +22,10 @@ DAEMON=/usr/local/bin/$NAME
 case "$1" in
     start)
         echo -n "Starting $NAME:"
-        [ -p "/tmp/mplayer" ] || mkfifo --mode=0666 $PIPE
+        [ -p "/tmp/mplayer" ] || mkfifo --mode=0666 /tmp/mplayer
         [ -e "/media/usb/animation.mov" ] && cp /media/usb/animation.mov /tmp
-        $MPLAYER -nolirc -nosound -noautosub -osdlevel 0 -vo fbdev2:/dev/fb1 -loop 0 -slave -really-quiet -input file=$PIPE /tmp/animation.mov &
-        $NAME > $PIPE &
+        /usr/bin/mplayer -nolirc -nosound -noautosub -osdlevel 0 -vo fbdev2:/dev/fb1 -loop 0 -slave -really-quiet -input file=/tmp/mplayer /tmp/animation.mov &
+        $DAEMON > /tmp/mplayer &
         ;;
     stop)
         echo -n "Stopping $NAME:"

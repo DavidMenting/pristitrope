@@ -288,14 +288,14 @@ int main (void) {
       } else if(upFlag > 0) {
           digitalWrite(tft_updown, 1);
           if(current_frame >= up_frame_start && current_frame < up_frame_end) next_frame();
-          else if(current_frame == up_frame_end + 1 || state == STATE_IDLE) jump_frame(up_frame_start);
+          else if(current_frame == up_frame_end || state == STATE_IDLE) jump_frame(up_frame_start);
           else jump_frame(down_frame_end - current_frame + up_frame_start);
           state = STATE_UP;
           upFlag = 0;
         } else if(downFlag > 0) {
           digitalWrite(tft_updown, 0);
           if(current_frame >= down_frame_start && current_frame < down_frame_end) next_frame();
-          else if(current_frame == down_frame_end + 1 || state == STATE_IDLE) jump_frame(down_frame_start);
+          else if(current_frame == down_frame_end || state == STATE_IDLE) jump_frame(down_frame_start);
           else jump_frame(up_frame_end - current_frame + down_frame_start);
           state = STATE_DOWN;
           downFlag=0;
