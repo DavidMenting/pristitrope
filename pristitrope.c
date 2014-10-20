@@ -18,8 +18,8 @@
 const char *KEYS[] = { "up_frame_start", "up_frame_end", "down_frame_start", "down_frame_end", "idle_frame_start", "idle_timeout", "video_fps" };
 char * js = 0; // Will hold the contents of the JSON file
 long length;
-int i, key_index;
-
+int key_index;
+int j, state;
 const static unsigned int encode_up = 2, encode_down = 3, tft_all = 18, tft_next = 27, tft_updown = 22, fb_cs = 23;
 const static unsigned int frame_timeout = 10, frame_time = 25; 
 unsigned int cs_off_time = 0;
@@ -40,7 +40,7 @@ unsigned int current_frame = 0,
   video_fps=16;
 //*/
 float video_spf; // Seconds Per Frame = 1/fps. 0.05 means 20fps
-int i, state;
+
 
 volatile int upFlag = 0, downFlag = 0;
 int direction, previous_direction;
@@ -89,11 +89,9 @@ void config(void){
     parse_state state = START;
 
     size_t object_tokens = 0;
+    int r = jsmn_parse(&p, js, strlen(js), tokens, NUM_TOKENS);
 
-    r = jsmn_parse(&p, js, strlen(js), tokens, NUM_TOKENS);
-
-    size_t i;
-    for (i = 0, j = 1; j > 0; i++, j--) {
+    for (size_t i = 0, j = 1; j > 0; i++, j--) {
         jsmntok_t *t = &tokens[i];
 
         // Should never reach uninitialized tokens
