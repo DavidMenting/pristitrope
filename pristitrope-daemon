@@ -9,9 +9,9 @@
 ### END INIT INFO
 
 NAME=pristitrope
-DAEMON=/usr/bin/$NAME
-
-export PATH="${PATH:+$PATH:}/sbin"
+MPLAYER=/usr/bin/mplayer
+PIPE=/tmp/mplayer
+DAEMON=/usr/local/bin/$NAME
 
 [ -x $DAEMON ] || exit 0
 
@@ -22,10 +22,10 @@ export PATH="${PATH:+$PATH:}/sbin"
 case "$1" in
     start)
         echo -n "Starting $NAME:"
-        [ -p "/tmp/mplayer" ] || mkfifo --mode=0666 /tmp/mplayer
+        [ -p "/tmp/mplayer" ] || mkfifo --mode=0666 $PIPE
         [ -e "/media/usb/animation.mov" ] && cp /media/usb/animation.mov /tmp
-        /usr/bin/mplayer -nolirc -nosound -noautosub -osdlevel 0 -vo fbdev2:/dev/fb1 -loop 0 -slave -really-quiet -input file=/tmp/mplayer /tmp/animation.mov &
-        /usr/bin/pristitrope > /tmp/mplayer &
+        $MPLAYER -nolirc -nosound -noautosub -osdlevel 0 -vo fbdev2:/dev/fb1 -loop 0 -slave -really-quiet -input file=$PIPE /tmp/animation.mov &
+        $NAME > $PIPE &
         ;;
     stop)
         echo -n "Stopping $NAME:"
