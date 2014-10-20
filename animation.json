@@ -1,8 +1,8 @@
 {
-  up_frame_start: 0
-  up_frame_end: 107
-  down_frame_start: 180
-  down_frame_end: 287
-  idle_frame_start: 306
-  video_fps: 16
+  "up_frame_start": 0,
+  "up_frame_end": 107,
+  "down_frame_start": 180,
+  "down_frame_end": 287,
+  "idle_frame_start": 306,
+  "video_fps": 16
 }
