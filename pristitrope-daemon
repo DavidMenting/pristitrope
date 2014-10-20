@@ -21,6 +21,7 @@ DAEMON=/usr/local/bin/$NAME
 
 case "$1" in
     start)
+        [ -e "/media/usb/splash.png" ] && cp /media/usb/splash.png /etc/splash.png
         echo -n "Starting $NAME:"
         [ -p "/tmp/mplayer" ] || mkfifo --mode=0666 /tmp/mplayer
         [ -e "/media/usb/animation.mov" ] && cp /media/usb/animation.mov /tmp
