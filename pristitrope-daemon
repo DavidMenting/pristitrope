@@ -1,0 +1,49 @@
+#!/bin/sh -e
+### BEGIN INIT INFO
+# Provides:          pristitrope-daemon
+# Required-Start:    
+# Required-Stop:     
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start or stop the pristitrope-daemon.
+### END INIT INFO
+
+NAME=pristitrope
+DAEMON=/usr/bin/$NAME
+
+export PATH="${PATH:+$PATH:}/sbin"
+
+[ -x $DAEMON ] || exit 0
+
+#[ -e /etc/default/$NAME ] && . /etc/default/$NAME
+
+. /lib/lsb/init-functions
+
+case "$1" in
+    start)
+        echo -n "Starting $NAME:"
+        [ -p "/tmp/mplayer" ] || mkfifo --mode=0666 /tmp/mplayer
+        [ -e "/media/usb/animation.mov" ] && cp /media/usb/animation.mov /tmp
+        /usr/bin/mplayer -nolirc -nosound -noautosub -osdlevel 0 -vo fbdev2:/dev/fb1 -loop 0 -slave -really-quiet -input file=/tmp/mplayer /tmp/animation.mov &
+        /usr/bin/pristitrope > /tmp/mplayer &
+        ;;
+    stop)
+        echo -n "Stopping $NAME:"
+        echo "quit" > /tmp/mplayer
+        rm /tmp/animation.mov
+        rm /tmp/mplayer
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    status)
+        status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
+        ;;
+    *)
+        echo -n "Usage: /etc/init.d/$NAME {start|stop|restart|status}" || true
+        exit 2
+        ;;
+esac
+
+exit 0

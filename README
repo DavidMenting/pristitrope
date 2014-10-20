@@ -1,0 +1,14 @@
+Requirements:
+
+Raspberry Pi
+WiringPi
+Mplayer
+
+Toggling GPIO2 makes the video move up one frame at a time. Toggling GPIO3 makes the video move down one frame at a time. Feed back the CS signal into GPIO23
+
+To install:
+make install
+
+pristitrope-daemon is installed as a service (in /etc/init.d)
+
+You can use initialize-gpio.sh to set all the gpios at their correct starting values. 
