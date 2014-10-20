@@ -28,16 +28,18 @@ unsigned long previousFrameTime = 0, currentFrameTime, time_elapsed;
 const static int STATE_IDLE = 0, STATE_UP = 1, STATE_DOWN = 2, STATE_TILT = 3;
 //const static int OVERSPEED = 3; // How many interrupts to miss in order to go into tilt mode
 
-const static unsigned int IDLE_TIME = 15000, NUMBER_OF_DISPLAYS = 16;
+const static unsigned int NUMBER_OF_DISPLAYS = 16;
 
 unsigned int current_frame = 0,
   idle_frame_start=306,
   up_frame_start=0,
   up_frame_end=107,
   down_frame_start=180,
-  down_frame_end=286;
+  down_frame_end=286,
+  idle_timeout=15000,
+  video_fps=16;
 //*/
-float video_spf=0.05556; // Seconds Per Frame = 1/fps. 0.05 means 20fps
+float video_spf; // Seconds Per Frame = 1/fps. 0.05 means 20fps
 int i, state;
 
 volatile int upFlag = 0, downFlag = 0;
@@ -79,7 +81,6 @@ void config(void){
   }
   if (js) {
     /* start the json parser */
-    int r;
     jsmn_parser p;
     jsmntok_t tokens[NUM_TOKENS];
     jsmn_init(&p);
@@ -91,7 +92,8 @@ void config(void){
 
     r = jsmn_parse(&p, js, strlen(js), tokens, NUM_TOKENS);
 
-    for (size_t i = 0, j = 1; j > 0; i++, j--) {
+    size_t i;
+    for (i = 0, j = 1; j > 0; i++, j--) {
         jsmntok_t *t = &tokens[i];
 
         // Should never reach uninitialized tokens
@@ -172,7 +174,7 @@ void config(void){
                     idle_frame_start = atoi(str);
                     break;
                   case 5:
-                    idle_timeout = atoi(str);
+                    idle_timeout = atoi(str)*1000;
                     break;
                   case 6:
                     video_fps = atoi(str);
@@ -195,6 +197,7 @@ void config(void){
                 log_die("Invalid state %u", state);
         }
     }
+    video_spf = 1.0/video_fps;
   }
 }
 
@@ -281,7 +284,7 @@ int main (void) {
    if(millis() > next_trigger) { 
 
 
-      if(millis() - next_trigger > IDLE_TIME) {
+      if(millis() - next_trigger > idle_timeout) {
         idle_frame();
         state = STATE_IDLE;
       } else if(upFlag > 0) {
