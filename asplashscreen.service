@@ -1,0 +1,9 @@
+[Unit]
+Description=Show splash screen on the tiny screen(s)
+
+[Service]
+Type=oneshot
+ExecStart=[ -e "/media/usb/splash.png" ] && cp /media/usb/splash.png /etc/splash.png; /usr/bin/fbi -T 1 -d /dev/fb1 -noverbose -a /etc/splash.png
+
+[Install]
+WantedBy=multi-user.target
